@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- 기존 키들... -->
+    
+    <!-- 위치 권한 -->
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>타임캡슐의 위치를 확인하고 근처 타임캡슐을 찾기 위해 위치 정보가 필요합니다.</string>
+    
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>타임캡슐의 위치를 확인하고 근처 타임캡슐을 찾기 위해 위치 정보가 필요합니다.</string>
+    
+    <!-- 카메라 권한 -->
+    <key>NSCameraUsageDescription</key>
+    <string>타임캡슐에 사진을 추가하기 위해 카메라 접근이 필요합니다.</string>
+    
+    <!-- 사진 라이브러리 권한 -->
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>타임캡슐에 사진을 추가하기 위해 사진 라이브러리 접근이 필요합니다.</string>
+    
+    <!-- 마이크 권한 (AR 기능용) -->
+    <key>NSMicrophoneUsageDescription</key>
+    <string>AR 기능 사용을 위해 마이크 접근이 필요합니다.</string>
+    
+    <!-- 네트워크 보안 설정 -->
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <true/>
+    </dict>
+    
+    <!-- Google Maps API 키 -->
+    <key>GoogleMapsAPIKey</key>
+    <string>YOUR_GOOGLE_MAPS_API_KEY</string>
+</dict>
+</plist>
