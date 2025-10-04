@@ -8,375 +8,278 @@
 import SwiftUI
 
 struct MainView: View {
+    
+    var images: [String] = ["greenEgg", "orangeEgg", "purpleEgg", "skyblueEgg"]
+    var dates: [String] = ["2025.09.12", "2025.10.05", "2025.11.20", "2025.12.25"]
+    var dDays: [String] = ["D-12", "D-35", "D-81", "D-126"]
+    var eggName: [String] = ["첫 만남", "여행", "생일", "크리스마스"]
+    let name: String = "재혁"
+    
     var body: some View {
-        ZStack() {
-            Group {
-                Text("차차님, 안녕하세요 (예시)")
-                    .font(Font.custom("DM Sans", size: 28).weight(.bold))
-                    .foregroundColor(Color(red: 0.24, green: 0.24, blue: 0.24))
-                    .offset(x: -3, y: -264)
-                Rectangle()
-                    .foregroundColor(.clear)
-                    .frame(width: 40, height: 40)
-                    .background(.white)
-                    .cornerRadius(15)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 15)
-                            .inset(by: 0.50)
-                            .stroke(
-                                Color(red: 0.85, green: 0.85, blue: 0.85).opacity(0.40), lineWidth: 0.50
-                            )
-                    )
-                    .offset(x: 147.50, y: -352)
-                Rectangle()
-                    .foregroundColor(.clear)
-                    .frame(width: 974, height: 4096)
-                    .background(Color(red: 0.50, green: 0.23, blue: 0.27).opacity(0.50))
-                    .offset(x: 1475.50, y: 770)
-                Rectangle()
-                    .foregroundColor(.clear)
-                    .frame(width: 18, height: 23)
-                    .background(Color(red: 0.50, green: 0.23, blue: 0.27).opacity(0.50))
-                    .offset(x: 147.50, y: -352.50)
-                    .shadow(
-                        color: Color(red: 0.59, green: 0.43, blue: 0.34, opacity: 0.20), radius: 15, y: 8
-                    )
-                ZStack() {
-                    ZStack() {
-                        Ellipse()
-                            .foregroundColor(.clear)
-                            .frame(width: 60, height: 60)
-                            .background(Color(red: 0.98, green: 0.53, blue: 0.12))
-                            .offset(x: 0, y: 0)
-                            .shadow(
-                                color: Color(red: 0.59, green: 0.43, blue: 0.34, opacity: 0.20), radius: 15, y: 8
-                            )
-                    }
-                    .frame(width: 60, height: 60)
-                    .offset(x: -1, y: -17.50)
-                    ZStack() {
+        GeometryReader { geometry in
+            ZStack {
+                // 배경
+                Color(red: 0.97, green: 0.98, blue: 1)
+                    .ignoresSafeArea()
+                
+                VStack(spacing: 0) {
+                    
+                    // 상단 헤더
+                    HStack {
+                        VStack(alignment: .leading, spacing: geometry.size.height * 0.005) {
+                            Image("textLogo")
+                            Text("\(name)님, 반가워요!")
+                                .font(Font.custom("DM Sans", size: geometry.size.width * 0.075).weight(.bold))
+                                .foregroundColor(Color(red: 0.24, green: 0.24, blue: 0.24))
+                        }
                         
-                    }
-                    .foregroundColor(.clear)
-                    .frame(width: 24, height: 24)
-                    .offset(x: -137, y: -1.50)
-                    ZStack() {
-                        HStack(spacing: 10) {
-                            
+                        Spacer()
+                        
+                        // 프로필 버튼
+                        Button(action: {
+                            // 프로필 액션
+                        }) {
+                            ZStack {
+                                Circle()
+                                    .fill(.white)
+                                    .frame(width: geometry.size.width * 0.107, height: geometry.size.width * 0.107)
+                                    .overlay(
+                                        Circle()
+                                            .stroke(Color(red: 0.85, green: 0.85, blue: 0.85).opacity(0.40), lineWidth: 0.5)
+                                    )
+                                
+                                Image(systemName: "person.fill")
+                                    .font(.system(size: geometry.size.width * 0.048))
+                                    .foregroundColor(Color(red: 0.50, green: 0.23, blue: 0.27))
+                            }
                         }
-                        .padding(2)
-                        .frame(width: 24, height: 24)
-                        .background(.white)
-                        .offset(x: 0, y: 0)
                     }
-                    .frame(width: 24, height: 24)
-                    .offset(x: -137, y: 0.50)
-                    ZStack() {
-                        HStack(spacing: 10) {
+                    .padding(.horizontal, geometry.size.width * 0.053)
+                    .padding(.top, geometry.size.height * 0.02)
+                    
+                    Spacer()
+                    
+                    // 지도 섹션
+                    ZStack {
+                        // 지도 배경
+                        RoundedRectangle(cornerRadius: geometry.size.width * 0.053)
+                            .fill(
+                                ImagePaint(
+                                    image: Image("dummyMap"),
+                                    scale: 1.0
+                                )
+                            )
+                            .frame(width: geometry.size.width * 0.872, height: geometry.size.height * 0.232)
+                            .blur(radius: 0.5)
+                        
+                        // 지도 위 마커들
+                        HStack {
+                            Spacer()
                             
-                        }
-                        .padding(2)
-                        .frame(width: 24, height: 24)
-                        .background(.white)
-                        .offset(x: 0, y: 0)
-                    }
-                    .frame(width: 24, height: 24)
-                    .offset(x: -70, y: 0.50)
-                    ZStack() {
-                        HStack(spacing: 10) {
+                            VStack {
+                                Spacer()
+                                
+                                // +2 마커
+                                ZStack {
+                                    Circle()
+                                        .fill(Color(red: 0.97, green: 0.52, blue: 0.52))
+                                        .frame(width: geometry.size.width * 0.08, height: geometry.size.width * 0.08)
+                                    
+                                    Text("+2")
+                                        .font(Font.custom("Inter", size: geometry.size.width * 0.037).weight(.black))
+                                        .foregroundColor(.black)
+                                }
+                                
+                                Spacer()
+                            }
                             
-                        }
-                        .padding(3)
-                        .frame(width: 24, height: 24)
-                        .background(.white)
-                        .offset(x: 0, y: 0)
-                    }
-                    .frame(width: 24, height: 24)
-                    .offset(x: 65, y: 0.50)
-                    ZStack() {
-                        HStack(spacing: 10) {
+                            Spacer()
                             
+                            VStack {
+                                // +5 마커
+                                ZStack {
+                                    Circle()
+                                        .fill(Color(red: 0.93, green: 0.27, blue: 0.27))
+                                        .frame(width: geometry.size.width * 0.08, height: geometry.size.width * 0.08)
+                                    
+                                    Text("+5")
+                                        .font(Font.custom("Inter", size: geometry.size.width * 0.037).weight(.black))
+                                        .foregroundColor(.black)
+                                }
+                                
+                                Spacer()
+                            }
+                            
+                            Spacer()
+                            
+                            VStack {
+                                Spacer()
+                                
+                                // +1 마커
+                                ZStack {
+                                    Circle()
+                                        .fill(Color(red: 0.93, green: 0.41, blue: 0.27))
+                                        .frame(width: geometry.size.width * 0.08, height: geometry.size.width * 0.08)
+                                    
+                                    Text("+1")
+                                        .font(Font.custom("Inter", size: geometry.size.width * 0.037).weight(.black))
+                                        .foregroundColor(.black)
+                                }
+                                
+                                Spacer()
+                            }
+                            
+                            Spacer()
                         }
-                        .padding(EdgeInsets(top: 2, leading: 4, bottom: 2, trailing: 4))
-                        .frame(width: 24, height: 24)
-                        .background(.white)
-                        .offset(x: 0, y: 0)
+                        .frame(width: geometry.size.width * 0.872, height: geometry.size.height * 0.232)
                     }
-                    .frame(width: 24, height: 24)
-                    .offset(x: 130, y: 0.50)
-                }
-                .frame(width: 378, height: 115)
-                .offset(x: 0.50, y: 348.50)
-                ZStack() {
-                    Rectangle()
-                        .foregroundColor(.clear)
-                        .frame(width: 375, height: 44)
-                        .offset(x: 0, y: 0)
-                    Rectangle()
-                        .foregroundColor(.clear)
-                        .frame(width: 22, height: 11.33)
-                        .cornerRadius(2.67)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 2.67)
-                                .inset(by: 0.50)
-                                .stroke(.black, lineWidth: 0.50)
+                    
+                    Spacer()
+                    
+                    // 나의 캡슐 섹션
+                    VStack(alignment: .leading, spacing: geometry.size.height * 0.015) {
+                        HStack {
+                            Text("나의 캡슐")
+                                .font(Font.custom("DM Sans", size: geometry.size.width * 0.043).weight(.bold))
+                                .foregroundColor(Color(red: 0.24, green: 0.24, blue: 0.24))
+                            
+                            Spacer()
+                            
+                            Button(action: {
+                                // 전체 보기 액션
+                            }) {
+                                Text("view all(\(images.count))")
+                                    .font(Font.custom("Inter", size: geometry.size.width * 0.037))
+                                    .underline()
+                                    .foregroundColor(Color(red: 1, green: 0.33, blue: 0.29))
+                            }
+                        }
+                        .padding(.horizontal, geometry.size.width * 0.053)
+                        
+                        // 캡슐 카드들
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: geometry.size.width * 0.053) {
+                                ForEach(0..<4) { index in
+                                    VStack(spacing: geometry.size.height * 0.012) {
+                                        // 달걀 일러스트
+                                        Image("\(images[index])")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .frame(width: geometry.size.width * 0.4,
+                                                   height: geometry.size.width * 0.4)
+                                            .clipShape(RoundedRectangle(cornerRadius: geometry.size.width * 0.067))
+                                        
+                                        VStack(spacing: geometry.size.height * 0.005) {
+                                            Text("\(eggName[index])")
+                                                .font(Font.custom("Inter", size: geometry.size.width * 0.04))
+                                                .foregroundColor(Color(red: 0.16, green: 0.18, blue: 0.25))
+                                                .multilineTextAlignment(.center)
+                                            
+                                            Text("\(dates[index])")
+                                                .font(Font.custom("Inter", size: geometry.size.width * 0.027))
+                                                .foregroundColor(Color(red: 0.36, green: 0.39, blue: 0.47))
+                                            
+                                            // D-Day 태그
+                                            Text("\(dDays[index])")
+                                                .font(Font.custom("Inter", size: geometry.size.width * 0.032))
+                                                .foregroundColor(.black)
+                                                .padding(.horizontal, geometry.size.width * 0.04)
+                                                .padding(.vertical, geometry.size.height * 0.005)
+                                                .background(
+                                                    RoundedRectangle(cornerRadius: geometry.size.width * 0.08)
+                                                        .fill(Color(red: 0.98, green: 0.74, blue: 0.02).opacity(0.60))
+                                                )
+                                        }
+                                    }
+                                    .frame(width: geometry.size.width * 0.493)
+                                    .padding(geometry.size.width * 0.04)
+                                    .background(.white)
+                                    .cornerRadius(geometry.size.width * 0.067)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: geometry.size.width * 0.067)
+                                            .stroke(Color(red: 0.85, green: 0.85, blue: 0.85), lineWidth: 0.5)
+                                    )
+                                }
+                            }
+                            .padding(.horizontal, geometry.size.width * 0.053)
+                        }
+                    }
+                    
+                    Spacer()
+                    
+                    // 하단 네비게이션 바
+                    HStack(spacing: 0) {
+                        // 홈
+                        Button(action: {}) {
+                            Image(systemName: "house.fill")
+                                .font(.system(size: geometry.size.width * 0.064))
+                                .foregroundColor(Color(red: 0.98, green: 0.53, blue: 0.12))
+                        }
+                        .frame(maxWidth: .infinity)
+                        
+                        // 알림
+                        Button(action: {}) {
+                            Image(systemName: "bell")
+                                .font(.system(size: geometry.size.width * 0.064))
+                                .foregroundColor(.gray)
+                        }
+                        .frame(maxWidth: .infinity)
+                        
+                        // 중앙 + 버튼
+                        VStack(spacing: 0) {
+                            Button(action: {}) {
+                                ZStack {
+                                    Circle()
+                                        .fill(Color(red: 0.98, green: 0.53, blue: 0.12))
+                                        .frame(width: geometry.size.width * 0.16, height: geometry.size.width * 0.16)
+                                        .shadow(
+                                            color: Color(red: 0.59, green: 0.43, blue: 0.34, opacity: 0.20),
+                                            radius: geometry.size.width * 0.04,
+                                            y: geometry.size.width * 0.021
+                                        )
+                                    
+                                    Image(systemName: "plus")
+                                        .font(.system(size: geometry.size.width * 0.064, weight: .bold))
+                                        .foregroundColor(.white)
+                                }
+                            }
+                            .frame(maxWidth: .infinity)
+                            
+                            // 버튼을 위로 올리기 위한 투명한 공간
+                            Rectangle()
+                                .fill(Color.clear)
+                                .frame(height: geometry.size.height * 0.022)
+                        }
+                        
+                        // 검색
+                        Button(action: {}) {
+                            Image(systemName: "magnifyingglass")
+                                .font(.system(size: geometry.size.width * 0.064))
+                                .foregroundColor(.gray)
+                        }
+                        .frame(maxWidth: .infinity)
+                        
+                        // 프로필
+                        Button(action: {}) {
+                            Image(systemName: "person")
+                                .font(.system(size: geometry.size.width * 0.064))
+                                .foregroundColor(.gray)
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
+                    .padding(.horizontal, geometry.size.width * 0.053)
+                    .padding(.vertical, geometry.size.height * 0.015)
+                    .background(.white)
+                    .clipShape(
+                        UnevenRoundedRectangle(
+                            topLeadingRadius: geometry.size.width * 0.067,
+                            topTrailingRadius: geometry.size.width * 0.067
                         )
-                        .offset(x: 159.50, y: 0.99)
-                    Rectangle()
-                        .foregroundColor(.clear)
-                        .frame(width: 18, height: 7.33)
-                        .background(.black)
-                        .cornerRadius(1.33)
-                        .offset(x: 159.50, y: 0.99)
-                    ZStack() {
-                        Text("9:41")
-                            .font(Font.custom("SF Pro Text", size: 14).weight(.semibold))
-                            .foregroundColor(.black)
-                            .offset(x: 0, y: 1)
-                    }
-                    .frame(width: 54, height: 21)
-                    .offset(x: -139.50, y: 1.50)
+                    )
                 }
-                .frame(width: 375, height: 44)
-                .offset(x: 0, y: -386)
-                Text("나의 캡슐")
-                    .font(Font.custom("DM Sans", size: 16).weight(.bold))
-                    .foregroundColor(Color(red: 0.24, green: 0.24, blue: 0.24))
-                    .offset(x: -136, y: 19.50)
-                ZStack() {
-                    Text("view all(29)")
-                        .font(Font.custom("Inter", size: 14))
-                        .lineSpacing(21.32)
-                        .underline()
-                        .foregroundColor(Color(red: 1, green: 0.33, blue: 0.29))
-                        .offset(x: 0, y: 0)
-                }
-                .frame(width: 75, height: 21)
-                .offset(x: 127, y: 19.50)
-                HStack(alignment: .top, spacing: 20) {
-                    ZStack() {
-                        Rectangle()
-                            .foregroundColor(.clear)
-                            .frame(width: 185, height: 220)
-                            .background(.white)
-                            .cornerRadius(25)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 25)
-                                    .inset(by: 0.50)
-                                    .stroke(Color(red: 0.85, green: 0.85, blue: 0.85), lineWidth: 0.50)
-                            )
-                            .offset(x: 0, y: 0)
-                        Text("캡슐제목2")
-                            .font(Font.custom("Inter", size: 15))
-                            .lineSpacing(22)
-                            .foregroundColor(Color(red: 0.16, green: 0.18, blue: 0.25))
-                            .offset(x: -1, y: 51)
-                        Text("2025.09.12 ")
-                            .font(Font.custom("Inter", size: 10))
-                            .lineSpacing(22)
-                            .foregroundColor(Color(red: 0.36, green: 0.39, blue: 0.47))
-                            .offset(x: -0.50, y: 67)
-                        ZStack() {
-                            Rectangle()
-                                .foregroundColor(.clear)
-                                .frame(width: 116, height: 21)
-                                .background(Color(red: 0.98, green: 0.74, blue: 0.02).opacity(0.60))
-                                .cornerRadius(30)
-                                .offset(x: 0, y: -0.50)
-                            Text("D-12")
-                                .font(Font.custom("Inter", size: 12))
-                                .lineSpacing(22)
-                                .foregroundColor(.black)
-                                .offset(x: -1, y: 0)
-                        }
-                        .frame(width: 116, height: 22)
-                        .offset(x: 0.50, y: 89)
-                        Rectangle()
-                            .foregroundColor(.clear)
-                            .frame(width: 150, height: 150)
-                            .background(Color(red: 0.50, green: 0.23, blue: 0.27).opacity(0.50))
-                            .offset(x: -0.50, y: -35)
-                    }
-                    .frame(width: 185, height: 220)
-                    ZStack() {
-                        Rectangle()
-                            .foregroundColor(.clear)
-                            .frame(width: 185, height: 220)
-                            .background(.white)
-                            .cornerRadius(25)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 25)
-                                    .inset(by: 0.50)
-                                    .stroke(Color(red: 0.85, green: 0.85, blue: 0.85), lineWidth: 0.50)
-                            )
-                            .offset(x: 0, y: 0)
-                        Text("캡슐제목1")
-                            .font(Font.custom("Inter", size: 15))
-                            .lineSpacing(22)
-                            .foregroundColor(Color(red: 0.16, green: 0.18, blue: 0.25))
-                            .offset(x: -1, y: 51)
-                        Text("2025.09.12 ")
-                            .font(Font.custom("Inter", size: 10))
-                            .lineSpacing(22)
-                            .foregroundColor(Color(red: 0.36, green: 0.39, blue: 0.47))
-                            .offset(x: -0.50, y: 67)
-                        ZStack() {
-                            Rectangle()
-                                .foregroundColor(.clear)
-                                .frame(width: 116, height: 21)
-                                .background(Color(red: 0.98, green: 0.74, blue: 0.02).opacity(0.60))
-                                .cornerRadius(30)
-                                .offset(x: 0, y: -0.50)
-                            Text("D-12")
-                                .font(Font.custom("Inter", size: 12))
-                                .lineSpacing(22)
-                                .foregroundColor(.black)
-                                .offset(x: -1, y: 0)
-                        }
-                        .frame(width: 116, height: 22)
-                        .offset(x: 0.50, y: 89)
-                        Rectangle()
-                            .foregroundColor(.clear)
-                            .frame(width: 150, height: 150)
-                            .background(Color(red: 0.50, green: 0.23, blue: 0.27).opacity(0.50))
-                            .offset(x: 0.50, y: -35)
-                    }
-                    .frame(width: 185, height: 220)
-                    ZStack() {
-                        Rectangle()
-                            .foregroundColor(.clear)
-                            .frame(width: 185, height: 220)
-                            .background(.white)
-                            .cornerRadius(25)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 25)
-                                    .inset(by: 0.50)
-                                    .stroke(Color(red: 0.85, green: 0.85, blue: 0.85), lineWidth: 0.50)
-                            )
-                            .offset(x: 0, y: 0)
-                        Text("캡슐제목3")
-                            .font(Font.custom("Inter", size: 15))
-                            .lineSpacing(22)
-                            .foregroundColor(Color(red: 0.16, green: 0.18, blue: 0.25))
-                            .offset(x: -1.50, y: 51)
-                        Text("2025.09.12 ")
-                            .font(Font.custom("Inter", size: 10))
-                            .lineSpacing(22)
-                            .foregroundColor(Color(red: 0.36, green: 0.39, blue: 0.47))
-                            .offset(x: -0.50, y: 67)
-                        ZStack() {
-                            Rectangle()
-                                .foregroundColor(.clear)
-                                .frame(width: 116, height: 21)
-                                .background(Color(red: 0.98, green: 0.74, blue: 0.02).opacity(0.60))
-                                .cornerRadius(30)
-                                .offset(x: 0, y: -0.50)
-                            Text("D-12")
-                                .font(Font.custom("Inter", size: 12))
-                                .lineSpacing(22)
-                                .foregroundColor(.black)
-                                .offset(x: -1, y: 0)
-                        }
-                        .frame(width: 116, height: 22)
-                        .offset(x: 0.50, y: 89)
-                        Rectangle()
-                            .foregroundColor(.clear)
-                            .frame(width: 150, height: 150)
-                            .background(Color(red: 0.50, green: 0.23, blue: 0.27).opacity(0.50))
-                            .offset(x: -0.50, y: -35)
-                    }
-                    .frame(width: 185, height: 220)
-                    ZStack() {
-                        Rectangle()
-                            .foregroundColor(.clear)
-                            .frame(width: 185, height: 220)
-                            .background(.white)
-                            .cornerRadius(25)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 25)
-                                    .inset(by: 0.50)
-                                    .stroke(Color(red: 0.85, green: 0.85, blue: 0.85), lineWidth: 0.50)
-                            )
-                            .offset(x: 0, y: 0)
-                        Text("캡슐제목4")
-                            .font(Font.custom("Inter", size: 15))
-                            .lineSpacing(22)
-                            .foregroundColor(Color(red: 0.16, green: 0.18, blue: 0.25))
-                            .offset(x: -1.50, y: 51)
-                        Text("2025.09.12 ")
-                            .font(Font.custom("Inter", size: 10))
-                            .lineSpacing(22)
-                            .foregroundColor(Color(red: 0.36, green: 0.39, blue: 0.47))
-                            .offset(x: -0.50, y: 67)
-                        ZStack() {
-                            Rectangle()
-                                .foregroundColor(.clear)
-                                .frame(width: 116, height: 21)
-                                .background(Color(red: 0.98, green: 0.74, blue: 0.02).opacity(0.60))
-                                .cornerRadius(30)
-                                .offset(x: 0, y: -0.50)
-                            Text("D-12")
-                                .font(Font.custom("Inter", size: 12))
-                                .lineSpacing(22)
-                                .foregroundColor(.black)
-                                .offset(x: -1, y: 0)
-                        }
-                        .frame(width: 116, height: 22)
-                        .offset(x: 0.50, y: 89)
-                        Rectangle()
-                            .foregroundColor(.clear)
-                            .frame(width: 150, height: 150)
-                            .background(Color(red: 0.50, green: 0.23, blue: 0.27).opacity(0.50))
-                            .offset(x: -1.50, y: -35)
-                    }
-                    .frame(width: 185, height: 220)
-                }
-                .frame(width: 334)
-                .offset(x: -0.50, y: 173)
-                Rectangle()
-                    .foregroundColor(.clear)
-                    .frame(width: 327, height: 188)
-                    .background(Color(red: 0.50, green: 0.23, blue: 0.27).opacity(0.50))
-                    .cornerRadius(20)
-                    .offset(x: 0, y: -139)
-                    .blur(radius: 0.50)
-            }
-            Group {
-                Ellipse()
-                    .foregroundColor(.clear)
-                    .frame(width: 30, height: 30)
-                    .background(Color(red: 0.93, green: 0.27, blue: 0.27))
-                    .offset(x: -23.50, y: -121)
-                Ellipse()
-                    .foregroundColor(.clear)
-                    .frame(width: 30, height: 30)
-                    .background(Color(red: 0.93, green: 0.41, blue: 0.27))
-                    .offset(x: 105.50, y: -139)
-                Ellipse()
-                    .foregroundColor(.clear)
-                    .frame(width: 30, height: 30)
-                    .background(Color(red: 0.97, green: 0.52, blue: 0.52))
-                    .offset(x: -83.50, y: -180)
-                Text("+5")
-                    .font(Font.custom("Inter", size: 14).weight(.black))
-                    .foregroundColor(.black)
-                    .offset(x: -24.50, y: -120.50)
-                Text("+2")
-                    .font(Font.custom("Inter", size: 14).weight(.black))
-                    .foregroundColor(.black)
-                    .offset(x: -84, y: -179.50)
-                Text("+1")
-                    .font(Font.custom("Inter", size: 14).weight(.black))
-                    .foregroundColor(.black)
-                    .offset(x: 105, y: -138.50)
-                Text("TimeEgg")
-                    .font(Font.custom("Edu AU VIC WA NT Hand", size: 30).weight(.bold))
-                    .foregroundColor(Color(red: 0.20, green: 0.20, blue: 0.20))
-                    .offset(x: -0.50, y: -350)
             }
         }
-        .frame(width: 375, height: 812)
-        .background(Color(red: 0.97, green: 0.98, blue: 1))
+        .ignoresSafeArea(edges: .bottom)
     }
 }
 
