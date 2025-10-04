@@ -10,242 +10,173 @@ import PhotosUI
 import SwiftData
 
 struct CreateTimeCapsuleView: View {
-    @Environment(\.dismiss) private var dismiss
-    @Environment(\.modelContext) private var modelContext
-    @State private var cameraViewModel = CameraViewModel()
-    @State private var timeCapsuleViewModel: TimeCapsuleViewModel?
-    
-    @State private var title = ""
-    @State private var content = ""
-    @State private var isPublic = false
-    @State private var taggedUsers: [String] = []
-    @State private var showingCamera = false
-    @State private var showingPhotoPicker = false
-    @State private var showingStickerPicker = false
-    @State private var showingUserSearch = false
-    @State private var isLoading = false
-    @State private var errorMessage: String?
-    
     var body: some View {
-        NavigationView {
-            Form {
-                Section("기본 정보") {
-                    TextField("제목", text: $title)
-                    TextField("내용", text: $content, axis: .vertical)
-                        .lineLimit(3...6)
-                }
-                
-                Section("사진") {
-                    HStack {
-                        Button("카메라로 촬영") {
-                            showingCamera = true
-                        }
-                        .buttonStyle(.bordered)
-                        
-                        Button("사진 라이브러리") {
-                            showingPhotoPicker = true
-                        }
-                        .buttonStyle(.bordered)
-                    }
-                    
-                    if !cameraViewModel.capturedPhotos.isEmpty {
-                        CapturedPhotosGridView(photos: cameraViewModel.capturedPhotos) { index in
-                            cameraViewModel.removePhoto(at: index)
-                        }
-                    }
-                }
-                
-                Section("스티커") {
-                    Button("스티커 추가") {
-                        showingStickerPicker = true
-                    }
-                    .buttonStyle(.bordered)
-                    
-                    if !cameraViewModel.selectedStickers.isEmpty {
-                        StickerGridView(stickers: cameraViewModel.selectedStickers) { index in
-                            cameraViewModel.removeSticker(at: index)
-                        }
-                    }
-                }
-                
-                Section("설정") {
-                    Toggle("공개 타임캡슐", isOn: $isPublic)
-                        .help("공개 타임캡슐은 다른 사용자도 볼 수 있습니다")
-                    
-                    Button("사용자 태그") {
-                        showingUserSearch = true
-                    }
-                    .buttonStyle(.bordered)
-                    
-                    if !taggedUsers.isEmpty {
-                        TaggedUsersView(taggedUsers: taggedUsers) { user in
-                            taggedUsers.removeAll { $0 == user }
-                        }
-                    }
-                }
-                
-                if let errorMessage = errorMessage {
-                    Section {
-                        Text(errorMessage)
-                            .foregroundColor(.red)
-                    }
-                }
-            }
-            .navigationTitle("새 타임캡슐")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("취소") {
-                        dismiss()
-                    }
-                }
-                
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("생성") {
-                        createTimeCapsule()
-                    }
-                    .disabled(title.isEmpty || content.isEmpty || isLoading)
-                }
-            }
-            .sheet(isPresented: $showingCamera) {
-                CameraView()
-            }
-            .sheet(isPresented: $showingPhotoPicker) {
-                PhotoPickerView { image in
-                    cameraViewModel.addPhotoFromLibrary(image)
-                }
-            }
-            .sheet(isPresented: $showingStickerPicker) {
-                StickerPickerView { sticker in
-                    cameraViewModel.addSticker(sticker)
-                }
-            }
-            .sheet(isPresented: $showingUserSearch) {
-                UserSearchView { user in
-                    if !taggedUsers.contains(user) {
-                        taggedUsers.append(user)
-                    }
-                }
-            }
-            .onAppear {
-                setupViewModel()
-            }
-        }
-    }
-    
-    private func setupViewModel() {
-        let locationService = LocationService()
-        let notificationService = NotificationService()
-        timeCapsuleViewModel = TimeCapsuleViewModel(
-            modelContext: modelContext,
-            locationService: locationService,
-            notificationService: notificationService
-        )
-    }
-    
-    private func createTimeCapsule() {
-        guard let timeCapsuleViewModel = timeCapsuleViewModel else { 
-            errorMessage = "뷰모델이 초기화되지 않았습니다."
-            return 
-        }
-        
-        isLoading = true
-        errorMessage = nil
-        
-        Task {
-            await timeCapsuleViewModel.createTimeCapsule(
-                title: title,
-                content: content,
-                photos: cameraViewModel.getPhotoData(),
-                arPhotos: cameraViewModel.getARPhotoData(),
-                stickers: cameraViewModel.getStickerData(),
-                isPublic: isPublic,
-                taggedUsers: taggedUsers
-            )
-            
-            await MainActor.run {
-                isLoading = false
-                if timeCapsuleViewModel.errorMessage == nil {
-                    dismiss()
-                } else {
-                    errorMessage = timeCapsuleViewModel.errorMessage
-                }
-            }
-        }
-    }
-}
-
-struct CapturedPhotosGridView: View {
-    let photos: [UIImage]
-    let onRemove: (Int) -> Void
-    
-    var body: some View {
-        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 3), spacing: 10) {
-            ForEach(Array(photos.enumerated()), id: \.offset) { index, photo in
-                ZStack(alignment: .topTrailing) {
-                    Image(uiImage: photo)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(height: 80)
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                    
-                    Button(action: { onRemove(index) }) {
-                        Image(systemName: "xmark.circle.fill")
-                            .foregroundColor(.red)
-                            .background(Color.white, in: Circle())
-                    }
-                    .offset(x: 5, y: -5)
-                }
-            }
-        }
-    }
-}
-
-struct StickerGridView: View {
-    let stickers: [TimeEgg.StickerData]
-    let onRemove: (Int) -> Void
-    
-    var body: some View {
-        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 4), spacing: 10) {
-            ForEach(Array(stickers.enumerated()), id: \.offset) { index, sticker in
-                ZStack(alignment: .topTrailing) {
-                    Image(systemName: "face.smiling")
-                        .font(.title2)
-                        .foregroundColor(.blue)
-                        .frame(width: 50, height: 50)
-                        .background(Color.blue.opacity(0.1), in: RoundedRectangle(cornerRadius: 8))
-                    
-                    Button(action: { onRemove(index) }) {
-                        Image(systemName: "xmark.circle.fill")
-                            .foregroundColor(.red)
-                            .background(Color.white, in: Circle())
-                    }
-                    .offset(x: 5, y: -5)
-                }
-            }
-        }
-    }
-}
-
-struct TaggedUsersView: View {
-    let taggedUsers: [String]
-    let onRemove: (String) -> Void
-    
-    var body: some View {
-        ForEach(taggedUsers, id: \.self) { user in
-            HStack {
-                Text(user)
+        ZStack() {
+            // 배경
+            Color(red: 0.97, green: 0.99, blue: 1)
+                .ignoresSafeArea()
+            VStack {
                 Spacer()
-                Button("제거") {
-                    onRemove(user)
+                HStack () {
+                    // 상단 네비게이션 바 (뒤로가기 버튼, 프로필)
+                    Rectangle()
+                        .foregroundColor(.clear)
+                        .frame(width: 40, height: 40)
+                        .background(.white)
+                        .cornerRadius(15)
+                    
+                    Spacer()
+                    Rectangle()
+                        .foregroundColor(.clear)
+                        .frame(width: 40, height: 40)
+                        .background(.white)
+                        .cornerRadius(15)
+                        .offset(x: 147.50, y: -352)
+                    
+                    Rectangle()
+                        .foregroundColor(.clear)
+                        .frame(width: 18, height: 23)
+                        .background(Color(red: 0.50, green: 0.23, blue: 0.27).opacity(0.50))
+                        .offset(x: 147.50, y: -352.50)
+                        .shadow(
+                            color: Color(red: 0.59, green: 0.43, blue: 0.34, opacity: 0.20), radius: 15, y: 8
+                        )
                 }
-                .foregroundColor(.red)
+
+                
+                // 사진 촬영/업로드 버튼
+                Text("사진 촬영/업로드")
+                    .font(Font.custom("Inter", size: 16).weight(.bold))
+                    .italic()
+                    .foregroundColor(Color(red: 0.98, green: 0.53, blue: 0.12))
+                    .padding(EdgeInsets(top: 15, leading: 20, bottom: 15, trailing: 20))
+                    .frame(width: 335)
+                    .background(Color.clear)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 20)
+                            .stroke(Color(red: 0.98, green: 0.53, blue: 0.12), lineWidth: 1)
+                    )
+                        
+                Spacer(minLength: 20)
+                // 제목 입력 필드
+                TextField("제목", text: .constant(""))
+                    .font(Font.custom("Inter", size: 14))
+                    .foregroundColor(Color(red: 0.20, green: 0.20, blue: 0.20))
+                    .padding(EdgeInsets(top: 12, leading: 16, bottom: 12, trailing: 16))
+                    .frame(width: 335, height: 50)
+                    .background(.white)
+                    .cornerRadius(8)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .inset(by: 0.50)
+                            .stroke(Color(red: 0.85, green: 0.85, blue: 0.85), lineWidth: 0.50)
+                    )
+                    
+                
+                // 메모 입력 필드
+                TextField("메모 입력 필드", text: .constant(""), axis: .vertical)
+                    .font(Font.custom("Inter", size: 14))
+                    .foregroundColor(Color(red: 0.20, green: 0.20, blue: 0.20))
+                    .padding(EdgeInsets(top: 12, leading: 16, bottom: 12, trailing: 16))
+                    .frame(width: 335, height: 100)
+                    .background(.white)
+                    .cornerRadius(8)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .inset(by: 0.50)
+                            .stroke(Color(red: 0.85, green: 0.85, blue: 0.85), lineWidth: 0.50)
+                    )
+                        
+                
+                HStack {
+                    // 조건추가 버튼
+                    ZStack() {
+                        Rectangle()
+                            .foregroundColor(.clear)
+                            .frame(width: 163, height: 36)
+                            .background(.white)
+                            .cornerRadius(8)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .inset(by: 0.50)
+                                    .stroke(Color(red: 0.85, green: 0.85, blue: 0.85), lineWidth: 0.50)
+                            )
+                        Text("조건추가")
+                            .font(Font.custom("Fira Sans", size: 16).weight(.medium))
+                            .lineSpacing(20)
+                            .foregroundColor(Color(red: 0.20, green: 0.20, blue: 0.20))
+                    }
+                    .frame(width: 163, height: 36)
+                    
+                    
+                    // 공개범위 버튼
+                    ZStack() {
+                        HStack(alignment: .top, spacing: 41) {
+                            Text("공개범위")
+                                .font(Font.custom("Fira Sans", size: 16).weight(.medium))
+                                .lineSpacing(20)
+                                .foregroundColor(Color(red: 0.20, green: 0.20, blue: 0.20))
+                            ZStack() {
+                                
+                            }
+                            .frame(width: 18, height: 18)
+                            .opacity(0.50)
+                        }
+                        .padding(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+                        .frame(width: 163)
+                        .background(.white)
+                        .cornerRadius(8)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .inset(by: 0.50)
+                                .stroke(Color(red: 0.85, green: 0.85, blue: 0.85), lineWidth: 0.50)
+                        )
+                    }
+                    .frame(width: 163, height: 36)
+                    .cornerRadius(8)
+                    
+                }
+                
+                // 드롭다운 텍스트
+                Text("2. 드롭다운")
+                    .font(Font.custom("Fira Sans", size: 30).weight(.medium))
+                    .lineSpacing(18)
+                    .foregroundColor(Color(red: 0.32, green: 0.78, blue: 0.23))
+                    .offset(x: -8.50, y: 147)
+                
+                // 하단 타임캡슐 생성 버튼
+                HStack(alignment: .top, spacing: 10) {
+                    Text("타임캡슐 생성")
+                        .font(Font.custom("Inter", size: 14).weight(.bold))
+                        .lineSpacing(21.32)
+                        .foregroundColor(.white)
+                }
+                .padding(EdgeInsets(top: 15, leading: 20, bottom: 15, trailing: 20))
+                .frame(width: 335)
+                .background(
+                    LinearGradient(
+                        gradient: Gradient(colors: [
+                            Color(red: 0.98, green: 0.53, blue: 0.12),
+                            Color(red: 0.79, green: 0.26, blue: 0.07)
+                        ]),
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .cornerRadius(20)
+                .offset(x: 0, y: 349.50)
+                .shadow(
+                    color: Color(red: 0.79, green: 0.26, blue: 0.07, opacity: 0.10), radius: 30, y: 10
+                )
+                Spacer()
             }
+            
         }
+        .ignoresSafeArea()
     }
+    
 }
 
 #Preview {
     CreateTimeCapsuleView()
-        .modelContainer(for: TimeCapsule.self, inMemory: true)
 }
