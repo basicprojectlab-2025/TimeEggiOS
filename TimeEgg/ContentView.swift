@@ -7,18 +7,22 @@
 
 import SwiftUI
 import SwiftData
+import FirebaseAuth
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
+    @StateObject private var authService = FirebaseAuthService()
     @State private var selectedTab = 0
     @State private var timeCapsuleViewModel: TimeCapsuleViewModel?
-    @State private var mapViewModel: MapViewModel?
     @State private var locationService = LocationService()
     @State private var notificationService = NotificationService()
     
     var body: some View {
         Group {
-            if timeCapsuleViewModel == nil || mapViewModel == nil {
+            if !authService.isAuthenticated {
+                // 인증 화면
+                SignUpView()
+            } else if timeCapsuleViewModel == nil {
                 // 로딩 화면
                 VStack {
                     ProgressView()
@@ -40,14 +44,12 @@ struct ContentView: View {
                         .tag(0)
                     
                     // 지도 탭
-                    if let mapViewModel = mapViewModel {
-                        TimeEggMapView(mapViewModel: mapViewModel)
-                            .tabItem {
-                                Image(systemName: "map.fill")
-                                Text("지도")
-                            }
-                            .tag(1)
-                    }
+                    MapView()
+                        .tabItem {
+                            Image(systemName: "map.fill")
+                            Text("지도")
+                        }
+                        .tag(1)
                     
                     // 카메라 탭
                     CameraView()
@@ -90,13 +92,6 @@ struct ContentView: View {
             locationService: locationService,
             notificationService: notificationService
         )
-        
-        if let timeCapsuleViewModel = timeCapsuleViewModel {
-            mapViewModel = MapViewModel(
-                locationService: locationService,
-                timeCapsuleViewModel: timeCapsuleViewModel
-            )
-        }
         
         notificationService.setModelContext(modelContext)
     }
@@ -247,7 +242,9 @@ struct NotificationRow: View {
 
 struct ProfileView: View {
     @Environment(\.modelContext) private var modelContext
+    @StateObject private var authService = FirebaseAuthService()
     @State private var showingSettings = false
+    @State private var showingLogoutAlert = false
     
     var body: some View {
         NavigationView {
@@ -257,25 +254,42 @@ struct ProfileView: View {
                     .font(.system(size: 80))
                     .foregroundColor(.timeEggPrimary)
                 
-                Text("사용자 이름")
+                Text(authService.currentUser?.displayName ?? "사용자")
                     .font(.title2)
                     .fontWeight(.semibold)
                 
-                Text("user@example.com")
+                Text(authService.currentUser?.email ?? "user@example.com")
                     .foregroundColor(.secondary)
                 
                 Spacer()
                 
-                // 설정 버튼
-                Button("설정") {
-                    showingSettings = true
+                VStack(spacing: 12) {
+                    // 설정 버튼
+                    Button("설정") {
+                        showingSettings = true
+                    }
+                    .buttonStyle(.borderedProminent)
+                    
+                    // 로그아웃 버튼
+                    Button("로그아웃") {
+                        showingLogoutAlert = true
+                    }
+                    .buttonStyle(.bordered)
+                    .foregroundColor(.red)
                 }
-                .buttonStyle(.borderedProminent)
             }
             .padding()
             .navigationTitle("프로필")
             .sheet(isPresented: $showingSettings) {
                 SettingsView()
+            }
+            .alert("로그아웃", isPresented: $showingLogoutAlert) {
+                Button("취소", role: .cancel) { }
+                Button("로그아웃", role: .destructive) {
+                    authService.signOut()
+                }
+            } message: {
+                Text("정말 로그아웃하시겠습니까?")
             }
         }
     }
@@ -327,4 +341,7 @@ struct SettingsView: View {
 #Preview {
     ContentView()
         .modelContainer(for: [TimeCapsule.self, User.self, TimeEggNotification.self], inMemory: true)
+        .onAppear {
+            // Preview용 초기화
+        }
 }

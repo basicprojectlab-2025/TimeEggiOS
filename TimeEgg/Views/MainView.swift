@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct MainView: View {
+    @State private var navigateToAllCapsules = false
     
     var images: [String] = ["greenEgg", "orangeEgg", "purpleEgg", "skyblueEgg"]
     var dates: [String] = ["2025.09.12", "2025.10.05", "2025.11.20", "2025.12.25"]
@@ -30,7 +31,7 @@ struct MainView: View {
                             Image("textLogo")
                             Text("\(name)님, 반가워요!")
                                 .font(Font.custom("DM Sans", size: geometry.size.width * 0.075).weight(.bold))
-                                .foregroundColor(Color(red: 0.24, green: 0.24, blue: 0.24))
+                    .foregroundColor(Color(red: 0.24, green: 0.24, blue: 0.24))
                         }
                         
                         Spacer()
@@ -61,16 +62,11 @@ struct MainView: View {
                     
                     // 지도 섹션
                     ZStack {
-                        // 지도 배경
-                        RoundedRectangle(cornerRadius: geometry.size.width * 0.053)
-                            .fill(
-                                ImagePaint(
-                                    image: Image("dummyMap"),
-                                    scale: 1.0
-                                )
-                            )
+                        // 지도
+                        MapView()
                             .frame(width: geometry.size.width * 0.872, height: geometry.size.height * 0.232)
-                            .blur(radius: 0.5)
+                            .cornerRadius(geometry.size.width * 0.053)
+                            .clipped()
                         
                         // 지도 위 마커들
                         HStack {
@@ -145,14 +141,6 @@ struct MainView: View {
                             
                             Spacer()
                             
-                            Button(action: {
-                                // 전체 보기 액션
-                            }) {
-                                Text("view all(\(images.count))")
-                                    .font(Font.custom("Inter", size: geometry.size.width * 0.037))
-                                    .underline()
-                                    .foregroundColor(Color(red: 1, green: 0.33, blue: 0.29))
-                            }
                         }
                         .padding(.horizontal, geometry.size.width * 0.053)
                         
@@ -252,7 +240,10 @@ struct MainView: View {
                         }
                         
                         // 검색
-                        Button(action: {}) {
+                        Button(action: {
+                            // 검색 버튼 액션 - AllCapsulesView로 이동
+                            navigateToAllCapsules = true
+                        }) {
                             Image(systemName: "magnifyingglass")
                                 .font(.system(size: geometry.size.width * 0.064))
                                 .foregroundColor(.gray)
@@ -280,9 +271,17 @@ struct MainView: View {
             }
         }
         .ignoresSafeArea(edges: .bottom)
+        .navigationDestination(isPresented: $navigateToAllCapsules) {
+            AllCapsulesView()
+        }
     }
 }
 
 #Preview {
-    MainView()
+    NavigationStack {
+        MainView()
+    }
+    .onAppear {
+        // Preview용 초기화
+    }
 }
