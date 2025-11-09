@@ -7,6 +7,8 @@
 
 import Foundation
 import SwiftData
+import FirebaseAuth
+
 
 @Model
 final class User {
@@ -36,6 +38,17 @@ final class User {
         self.preferences = UserPreferences()
     }
 }
+
+extension User {
+    convenience init(from firebaseUser: FirebaseAuth.User) {
+        self.init(
+            id: firebaseUser.uid,
+            username: firebaseUser.displayName ?? "사용자",
+            email: firebaseUser.email ?? "unknown@example.com"
+        )
+    }
+}
+
 
 @Model
 final class UserPreferences {

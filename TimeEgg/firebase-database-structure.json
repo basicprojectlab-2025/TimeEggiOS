@@ -1,0 +1,113 @@
+{
+  "timeCapsules": {
+    "capsule-001": {
+      "id": "capsule-001",
+      "title": "여름 휴가 추억",
+      "memo": "제주도에서 가족과 함께한 즐거운 시간들. 다시 돌아오고 싶은 순간이었어요.",
+      "privacy": "친구공개",
+      "photoUrls": [
+        "https://storage.googleapis.com/time-egg/photos/user123/capsule-001/photo1.jpg",
+        "https://storage.googleapis.com/time-egg/photos/user123/capsule-001/photo2.jpg"
+      ],
+      "creatorId": "user123",
+      "createdAt": 1698825600.0,
+      "updatedAt": 1698825600.0
+    },
+    "capsule-002": {
+      "id": "capsule-002",
+      "title": "졸업식 날",
+      "memo": "오랜 기간 준비했던 졸업. 친구들과 함께한 마지막 날이 생각나네요.",
+      "privacy": "전체공개",
+      "photoUrls": [
+        "https://storage.googleapis.com/time-egg/photos/user456/capsule-002/photo1.jpg"
+      ],
+      "creatorId": "user456",
+      "createdAt": 1699430400.0,
+      "updatedAt": 1699430400.0
+    },
+    "capsule-003": {
+      "id": "capsule-003",
+      "title": "첫 눈 오던 날",
+      "memo": "올해의 첫 눈을 보며 소원을 빌었던 순간. 내년에 다시 이 장소에서 보고 싶어요.",
+      "privacy": "비공개",
+      "photoUrls": [],
+      "creatorId": "user789",
+      "createdAt": 1700035200.0,
+      "updatedAt": 1700035200.0
+    },
+    "capsule-004": {
+      "id": "capsule-004",
+      "title": "회사 첫 출근",
+      "memo": "새로운 시작! 떨리지만 설레는 마음으로 첫 출근을 했어요.",
+      "privacy": "친구공개",
+      "photoUrls": [
+        "https://storage.googleapis.com/time-egg/photos/user123/capsule-004/photo1.jpg",
+        "https://storage.googleapis.com/time-egg/photos/user123/capsule-004/photo2.jpg",
+        "https://storage.googleapis.com/time-egg/photos/user123/capsule-004/photo3.jpg"
+      ],
+      "creatorId": "user123",
+      "createdAt": 1700640000.0,
+      "updatedAt": 1700640000.0
+    }
+  },
+  "timeCapsuleAdditional": {
+    "capsule-001": {
+      "timeCapsuleId": "capsule-001",
+      "weather": "맑음",
+      "location": {
+        "latitude": 33.4996213,
+        "longitude": 126.5311884,
+        "address": "제주특별자치도 제주시 애월읍",
+        "radius": 500.0
+      },
+      "timeCondition": {
+        "targetDate": 1730419200.0,
+        "timeRange": {
+          "startTime": "14:00",
+          "endTime": "18:00"
+        }
+      },
+      "createdAt": 1698825600.0,
+      "updatedAt": 1698825600.0
+    },
+    "capsule-002": {
+      "timeCapsuleId": "capsule-002",
+      "weather": "흐림",
+      "location": {
+        "latitude": 37.5665,
+        "longitude": 126.9780,
+        "address": "서울특별시 중구 명동",
+        "radius": 1000.0
+      },
+      "timeCondition": {
+        "targetDate": 1735689600.0
+      },
+      "createdAt": 1699430400.0,
+      "updatedAt": 1699430400.0
+    },
+    "capsule-003": {
+      "timeCapsuleId": "capsule-003",
+      "weather": "눈",
+      "location": {
+        "latitude": 37.5326,
+        "longitude": 127.0244,
+        "address": "서울특별시 강남구 역삼동",
+        "radius": 300.0
+      },
+      "timeCondition": {
+        "timeRange": {
+          "startTime": "20:00",
+          "endTime": "23:59"
+        }
+      },
+      "createdAt": 1700035200.0,
+      "updatedAt": 1700035200.0
+    },
+    "capsule-004": {
+      "timeCapsuleId": "capsule-004",
+      "weather": "비",
+      "createdAt": 1700640000.0,
+      "updatedAt": 1700640000.0
+    }
+  }
+}

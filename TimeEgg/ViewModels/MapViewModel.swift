@@ -8,7 +8,8 @@
 import Foundation
 import CoreLocation
 import Combine
-import SwiftData
+
+// Note: TimeCapsule.swift의 모델을 사용합니다. (내장 DB 사용 안 함)
 
 @Observable
 class MapViewModel: NSObject {
@@ -57,16 +58,7 @@ class MapViewModel: NSObject {
     }
     
     func getTimeCapsulesInRegion(center: CLLocationCoordinate2D, radius: Double) -> [TimeCapsule] {
-        let centerLocation = CLLocation(latitude: center.latitude, longitude: center.longitude)
-        
-        return timeCapsules.filter { timeCapsule in
-            let timeCapsuleLocation = CLLocation(
-                latitude: timeCapsule.location.latitude,
-                longitude: timeCapsule.location.longitude
-            )
-            let distance = centerLocation.distance(from: timeCapsuleLocation)
-            return distance <= radius
-        }
+        return timeCapsuleViewModel.getTimeCapsulesInRegion(center: center, radius: radius)
     }
 }
 

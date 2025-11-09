@@ -14,6 +14,11 @@ import UIKit
 struct MapView: View {
     @State private var googleMapsService = GoogleMapsService()
     @State private var showingMapTypeSelector = false
+    let showControls: Bool
+    
+    init(showControls: Bool = true) {
+        self.showControls = showControls
+    }
     
     var body: some View {
         NavigationView {
@@ -22,36 +27,41 @@ struct MapView: View {
                 GoogleMapsView(googleMapsService: googleMapsService)
                     .ignoresSafeArea()
                 
-                // 상단 컨트롤
-                VStack {
-                    HStack {
-                        Spacer()
+                // 상단 컨트롤 (조건부 표시)
+                if showControls {
+                    VStack {
                         
-                        // 지도 타입 선택 버튼
-                        Button(action: { showingMapTypeSelector = true }) {
-                            Image(systemName: "map")
-                                .font(.title2)
-                                .foregroundColor(.white)
-                                .padding()
-                                .background(Color.blue, in: Circle())
-                        }
-                        
-                        // 내 위치로 이동 버튼
-                        Button(action: { 
-                            if let location = googleMapsService.currentLocation {
-                                googleMapsService.moveToLocation(location)
+                        HStack {
+                            Spacer()
+                            
+                            // 지도 타입 선택 버튼
+                            Button(action: { showingMapTypeSelector = true }) {
+                                Image(systemName: "map")
+                                    .font(.title2)
+                                    .foregroundColor(.white)
+                                    .padding()
+                                    .background(Color.blue, in: Circle())
                             }
-                        }) {
-                            Image(systemName: "location.fill")
-                                .font(.title2)
-                                .foregroundColor(.white)
-                                .padding()
-                                .background(Color.blue, in: Circle())
+
+                            
+                            // 내 위치로 이동 버튼
+                            Button(action: { 
+                                if let location = googleMapsService.currentLocation {
+                                    googleMapsService.moveToLocation(location)
+                                }
+                            }) {
+                                Image(systemName: "location.fill")
+                                    .font(.title2)
+                                    .foregroundColor(.white)
+                                    .padding()
+                                    .background(Color.blue, in: Circle())
+                            }
                         }
+                        .padding()
+                       
+                        
+                        Spacer()
                     }
-                    .padding()
-                    
-                    Spacer()
                 }
             }
             .navigationTitle("지도")

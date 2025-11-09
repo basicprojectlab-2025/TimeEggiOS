@@ -50,49 +50,49 @@ struct PhotoPickerView: UIViewControllerRepresentable {
     }
 }
 
-struct StickerPickerView: View {
-    let onStickerSelected: (StickerData) -> Void
-    @Environment(\.dismiss) private var dismiss
-    
-    var body: some View {
-        NavigationView {
-            ScrollView {
-                LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 4), spacing: 20) {
-                    ForEach(StickerConstants.availableStickers, id: \.self) { stickerName in
-                        Button(action: {
-                            let sticker = StickerData(
-                                id: UUID().uuidString,
-                                position: CGPoint(x: 0.5, y: 0.5),
-                                scale: 1.0,
-                                rotation: 0.0,
-                                imageName: stickerName
-                            )
-                            onStickerSelected(sticker)
-                            dismiss()
-                        }) {
-                            Image(systemName: stickerName)
-                                .font(.title)
-                                .foregroundColor(.blue)
-                                .frame(width: 60, height: 60)
-                                .background(Color.blue.opacity(0.1), in: RoundedRectangle(cornerRadius: 12))
-                        }
-                        .buttonStyle(PlainButtonStyle())
-                    }
-                }
-                .padding()
-            }
-            .navigationTitle("스티커 선택")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("닫기") {
-                        dismiss()
-                    }
-                }
-            }
-        }
-    }
-}
+//struct StickerPickerView: View {
+//    let onStickerSelected: (StickerData) -> Void
+//    @Environment(\.dismiss) private var dismiss
+//    
+//    var body: some View {
+//        NavigationView {
+//            ScrollView {
+//                LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 4), spacing: 20) {
+//                    ForEach(StickerConstants.availableStickers, id: \.self) { stickerName in
+//                        Button(action: {
+//                            let sticker = StickerData(
+//                                id: UUID().uuidString,
+//                                position: CGPoint(x: 0.5, y: 0.5),
+//                                scale: 1.0,
+//                                rotation: 0.0,
+//                                imageName: stickerName
+//                            )
+//                            onStickerSelected(sticker)
+//                            dismiss()
+//                        }) {
+//                            Image(systemName: stickerName)
+//                                .font(.title)
+//                                .foregroundColor(.blue)
+//                                .frame(width: 60, height: 60)
+//                                .background(Color.blue.opacity(0.1), in: RoundedRectangle(cornerRadius: 12))
+//                        }
+//                        .buttonStyle(PlainButtonStyle())
+//                    }
+//                }
+//                .padding()
+//            }
+//            .navigationTitle("스티커 선택")
+//            .navigationBarTitleDisplayMode(.inline)
+//            .toolbar {
+//                ToolbarItem(placement: .navigationBarTrailing) {
+//                    Button("닫기") {
+//                        dismiss()
+//                    }
+//                }
+//            }
+//        }
+//    }
+//}
 
 struct UserSearchView: View {
     let onUserSelected: (String) -> Void

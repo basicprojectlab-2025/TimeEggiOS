@@ -2,29 +2,35 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CLIENT_ID</key>
+	<string>381677984215-gvdeutcvnlp9tv10oppmupalvvdvlg8i.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.381677984215-l02sab4h8tdv9mq7i64u78ltj2s8hmm7</string>
 	<key>API_KEY</key>
-	<string>AIzaSyCtwJbLnGanR4DKA7C2vMOFpFTrZEZFMwM</string>
+	<string>AIzaSyA8l1UaH3nJT8CSpr6W118cqvxnbKwrSz8</string>
 	<key>GCM_SENDER_ID</key>
-	<string>627669271397</string>
+	<string>381677984215</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>com.downpool.TimeEgg</string>
 	<key>PROJECT_ID</key>
-	<string>timeegg-26c49</string>
+	<string>basicprojectlabs</string>
 	<key>STORAGE_BUCKET</key>
-	<string>timeegg-26c49.firebasestorage.app</string>
+	<string>basicprojectlabs.firebasestorage.app</string>
 	<key>IS_ADS_ENABLED</key>
-	<false></false>
+	<false/>
 	<key>IS_ANALYTICS_ENABLED</key>
-	<false></false>
+	<false/>
 	<key>IS_APPINVITE_ENABLED</key>
-	<true></true>
+	<true/>
 	<key>IS_GCM_ENABLED</key>
-	<true></true>
+	<true/>
 	<key>IS_SIGNIN_ENABLED</key>
-	<true></true>
+	<true/>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:627669271397:ios:4ed2a40042ba195241978c</string>
+	<string>1:381677984215:ios:de1af30b9ebb1e1c969392</string>
+	<key>DATABASE_URL</key>
+	<string>https://basicprojectlabs-default-rtdb.asia-southeast1.firebasedatabase.app</string>
 </dict>
 </plist>

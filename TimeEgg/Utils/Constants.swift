@@ -101,28 +101,6 @@ struct NotificationNames {
     static let notificationReceived = "NotificationReceived"
 }
 
-struct StickerConstants {
-    static let availableStickers = [
-        "face.smiling",
-        "heart.fill",
-        "star.fill",
-        "camera.fill",
-        "location.fill",
-        "clock.fill",
-        "gift.fill",
-        "sparkles",
-        "flame.fill",
-        "leaf.fill"
-    ]
-    
-    static let stickerCategories = [
-        "감정": ["face.smiling", "heart.fill", "sparkles"],
-        "활동": ["camera.fill", "location.fill", "clock.fill"],
-        "자연": ["leaf.fill", "flame.fill"],
-        "기타": ["star.fill", "gift.fill"]
-    ]
-}
-
 struct ErrorMessages {
     static let networkError = "네트워크 연결을 확인해주세요."
     static let locationPermissionDenied = "위치 권한이 필요합니다."

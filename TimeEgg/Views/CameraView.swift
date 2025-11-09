@@ -12,7 +12,6 @@ import PhotosUI
 struct CameraView: View {
     @State private var cameraViewModel = CameraViewModel()
     @State private var showingPhotoPicker = false
-    @State private var showingStickerPicker = false
     @State private var showingARMode = false
     @State private var previewLayer: AVCaptureVideoPreviewLayer?
     
@@ -84,13 +83,6 @@ struct CameraView: View {
             }
             .navigationTitle("카메라")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("스티커") {
-                        showingStickerPicker = true
-                    }
-                }
-            }
             .onAppear {
                 setupCamera()
             }
@@ -100,11 +92,6 @@ struct CameraView: View {
             .sheet(isPresented: $showingPhotoPicker) {
                 PhotoPickerView { image in
                     cameraViewModel.addPhotoFromLibrary(image)
-                }
-            }
-            .sheet(isPresented: $showingStickerPicker) {
-                StickerPickerView { sticker in
-                    cameraViewModel.addSticker(sticker)
                 }
             }
         }
@@ -183,7 +170,7 @@ struct CapturedPhotosView: View {
                                 .foregroundColor(.red)
                                 .background(Color.white, in: Circle())
                         }
-                        .offset(x: 5, y: -5)
+                        .position(x: 55, y: 5)
                     }
                 }
             }

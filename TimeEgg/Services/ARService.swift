@@ -80,19 +80,6 @@ class ARService: NSObject, ObservableObject {
     
     // MARK: - AR Content Management
     
-    func addStickerToAR(_ stickerName: String, at position: SIMD3<Float>) {
-        guard let arView = arView else { return }
-        
-        // 스티커 엔티티 생성
-        let stickerEntity = createStickerEntity(name: stickerName)
-        stickerEntity.position = position
-        
-        // AR 씬에 추가
-        let anchor = AnchorEntity(world: position)
-        anchor.addChild(stickerEntity)
-        arView.scene.addAnchor(anchor)
-    }
-    
     func add3DObjectToAR(_ objectName: String, at position: SIMD3<Float>) {
         guard let arView = arView else { return }
         
@@ -143,15 +130,6 @@ class ARService: NSObject, ObservableObject {
     }
     
     // MARK: - Helper Methods
-    
-    private func createStickerEntity(name: String) -> ModelEntity {
-        // 기본 스티커 엔티티 생성 (실제로는 3D 모델이나 텍스처 사용)
-        let mesh = MeshResource.generateSphere(radius: 0.1)
-        let material = SimpleMaterial(color: .blue, isMetallic: false)
-        let entity = ModelEntity(mesh: mesh, materials: [material])
-        
-        return entity
-    }
     
     private func create3DObjectEntity(name: String) -> ModelEntity {
         // 기본 3D 오브젝트 엔티티 생성

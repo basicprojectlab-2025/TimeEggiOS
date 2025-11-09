@@ -21,7 +21,6 @@ class CameraViewModel: NSObject {
     var isPhotoLibraryAuthorized = false
     var capturedPhotos: [UIImage] = []
     var arPhotos: [UIImage] = []
-    var selectedStickers: [TimeEgg.StickerData] = []
     var isRecording = false
     var errorMessage: String?
     
@@ -150,22 +149,6 @@ class CameraViewModel: NSObject {
         capturePhoto()
     }
     
-    // MARK: - Stickers
-    
-    func addSticker(_ sticker: TimeEgg.StickerData) {
-        selectedStickers.append(sticker)
-    }
-    
-    func removeSticker(at index: Int) {
-        guard index < selectedStickers.count else { return }
-        selectedStickers.remove(at: index)
-    }
-    
-    func updateSticker(at index: Int, with newSticker: TimeEgg.StickerData) {
-        guard index < selectedStickers.count else { return }
-        selectedStickers[index] = newSticker
-    }
-    
     // MARK: - Data Conversion
     
     func getPhotoData() -> [Data] {
@@ -177,14 +160,9 @@ class CameraViewModel: NSObject {
         return arPhotos.compactMap { $0.jpegData(compressionQuality: 0.8) }
     }
     
-    func getStickerData() -> [TimeEgg.StickerData]? {
-        return selectedStickers.isEmpty ? nil : selectedStickers
-    }
-    
     func clearAllData() {
         capturedPhotos.removeAll()
         arPhotos.removeAll()
-        selectedStickers.removeAll()
     }
 }
 

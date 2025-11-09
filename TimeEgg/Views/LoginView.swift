@@ -6,10 +6,15 @@
 //
 
 import SwiftUI
+import FirebaseAuth
 
 struct LoginView: View {
-    @State private var username = ""
-    @State private var password = ""
+    @StateObject private var authService = FirebaseAuthService()
+    @StateObject private var googleSignInService = GoogleSignInService()
+    @State private var isLoading = false
+    @State private var showAlert = false
+    @State private var alertMessage = ""
+    @State private var navigateToMainView = false
     
     var body: some View {
         GeometryReader { geometry in
@@ -30,163 +35,104 @@ struct LoginView: View {
                     Image("colorEgg")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
+                        .frame(height: geometry.size.height * 0.3)
                     
                     Spacer()
                     
-                    // 입력 필드
-                    VStack(spacing: geometry.size.height * 0.02) {
+                    // Google 로그인 버튼
+                    VStack(spacing: geometry.size.height * 0.03) {
+                        Text("Google 계정으로 시작하기")
+                            .font(Font.custom("Inter", size: geometry.size.width * 0.042).weight(.medium))
+                            .foregroundColor(Color(red: 0.24, green: 0.24, blue: 0.24))
+                            .padding(.bottom, geometry.size.height * 0.01)
                         
-                        // 아이디 입력 필드
-                        VStack(alignment: .leading, spacing: geometry.size.height * 0.01) {
-                            Text("아이디")
-                                .font(Font.custom("Inter", size: geometry.size.width * 0.032))
-                                .foregroundColor(Color(red: 0.24, green: 0.24, blue: 0.24))
-                            
-                            HStack {
-                                Image(systemName: "person")
-                                    .foregroundColor(Color(red: 0.67, green: 0.67, blue: 0.68))
-                                    .frame(width: geometry.size.width * 0.064, height: geometry.size.width * 0.064)
-                                
-                                // Placeholder 커스텀
-                                ZStack(alignment: .leading) {
-                                    if username.isEmpty {
-                                        Text("Enter your id")
-                                            .font(Font.custom("Inter", size: geometry.size.width * 0.037))
-                                            .foregroundColor(Color.gray.opacity(0.6))
-                                    }
-                                    TextField("", text: $username)
-                                        .font(Font.custom("Inter", size: geometry.size.width * 0.037))
-                                        .foregroundColor(.black)
-                                        .autocapitalization(.none)
-                                        .disableAutocorrection(true)
+                        Button(action: {
+                            handleGoogleSignIn()
+                        }) {
+                            HStack(spacing: geometry.size.width * 0.04) {
+                                if isLoading {
+                                    ProgressView()
+                                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                                        .scaleEffect(0.9)
+                                } else {
+                                    // Google 아이콘
+                                    Image(systemName: "globe")
+                                        .font(.system(size: geometry.size.width * 0.05, weight: .medium))
+                                        .foregroundColor(.white)
                                 }
+                                
+                                Text(isLoading ? "로그인 중..." : "Google로 로그인")
+                                    .font(Font.custom("Inter", size: geometry.size.width * 0.04).weight(.semibold))
+                                    .foregroundColor(.white)
                             }
-                            .padding(EdgeInsets(
-                                top: geometry.size.height * 0.015,
-                                leading: geometry.size.width * 0.043,
-                                bottom: geometry.size.height * 0.015,
-                                trailing: geometry.size.width * 0.043
-                            ))
-                            .frame(height: geometry.size.height * 0.062)
-                            .background(.white)
-                            .cornerRadius(geometry.size.width * 0.04)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: geometry.size.width * 0.04)
-                                    .stroke(Color(red: 0.87, green: 0.89, blue: 0.90), lineWidth: 0.50)
+                            .frame(width: geometry.size.width * 0.85, height: geometry.size.height * 0.07)
+                            .background(
+                                LinearGradient(
+                                    gradient: Gradient(colors: [
+                                        Color(red: 0.26, green: 0.52, blue: 0.96),
+                                        Color(red: 0.20, green: 0.40, blue: 0.85)
+                                    ]),
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
+                            .cornerRadius(geometry.size.width * 0.06)
+                            .shadow(
+                                color: Color(red: 0.26, green: 0.52, blue: 0.96, opacity: 0.3),
+                                radius: geometry.size.width * 0.05, y: geometry.size.height * 0.01
                             )
                         }
-                        
-                        // 비밀번호 입력 필드
-                        VStack(alignment: .leading, spacing: geometry.size.height * 0.01) {
-                            Text("비밀번호")
-                                .font(Font.custom("Inter", size: geometry.size.width * 0.032))
-                                .foregroundColor(Color(red: 0.24, green: 0.24, blue: 0.24))
-                            
-                            HStack {
-                                Image(systemName: "lock")
-                                    .foregroundColor(Color(red: 0.67, green: 0.67, blue: 0.68))
-                                    .frame(width: geometry.size.width * 0.064, height: geometry.size.width * 0.064)
-                                
-                                // Placeholder 커스텀
-                                ZStack(alignment: .leading) {
-                                    if password.isEmpty {
-                                        Text("Enter your password")
-                                            .font(Font.custom("Inter", size: geometry.size.width * 0.037))
-                                            .foregroundColor(Color.gray.opacity(0.6))
-                                    }
-                                    SecureField("", text: $password)
-                                        .font(Font.custom("Inter", size: geometry.size.width * 0.037))
-                                        .foregroundColor(.black)
-                                }
-                            }
-                            .padding(EdgeInsets(
-                                top: geometry.size.height * 0.015,
-                                leading: geometry.size.width * 0.043,
-                                bottom: geometry.size.height * 0.015,
-                                trailing: geometry.size.width * 0.043
-                            ))
-                            .frame(height: geometry.size.height * 0.062)
-                            .background(.white)
-                            .cornerRadius(geometry.size.width * 0.04)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: geometry.size.width * 0.04)
-                                    .stroke(Color(red: 0.87, green: 0.89, blue: 0.90), lineWidth: 0.50)
-                            )
-                        }
+                        .disabled(isLoading)
                     }
                     .frame(width: geometry.size.width * 0.89)
                     
                     Spacer()
-                    
-                    // 버튼 영역
-                    VStack(spacing: geometry.size.height * 0.02) {
-                        Button(action: {
-                            // 로그인 액션
-                        }) {
-                            Text("로그인")
-                                .font(Font.custom("Inter", size: geometry.size.width * 0.037).weight(.bold))
-                                .foregroundColor(Color(red: 0.98, green: 0.35, blue: 0.12))
-                                .frame(width: geometry.size.width * 0.89, height: geometry.size.height * 0.062)
-                                .background(.white)
-                                .cornerRadius(geometry.size.width * 0.053)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: geometry.size.width * 0.053)
-                                        .stroke(Color(red: 0.93, green: 0.41, blue: 0.27), lineWidth: 0.50)
-                                )
-                        }
-                        
-                        Button(action: {
-                            // 회원가입 액션
-                        }) {
-                            Text("회원가입")
-                                .font(Font.custom("Inter", size: geometry.size.width * 0.037).weight(.bold))
-                                .foregroundColor(.white)
-                                .frame(width: geometry.size.width * 0.89, height: geometry.size.height * 0.062)
-                                .background(
-                                    LinearGradient(
-                                        gradient: Gradient(colors: [
-                                            Color(red: 0.98, green: 0.53, blue: 0.12),
-                                            Color(red: 0.79, green: 0.26, blue: 0.07)
-                                        ]),
-                                        startPoint: .leading,
-                                        endPoint: .trailing
-                                    )
-                                )
-                                .cornerRadius(geometry.size.width * 0.053)
-                                .shadow(
-                                    color: Color(red: 0.79, green: 0.26, blue: 0.07, opacity: 0.10),
-                                    radius: geometry.size.width * 0.08, y: geometry.size.height * 0.012
-                                )
-                        }
-                        
-                        Button(action: {
-                            // TODO: Google 로그인 액션
-                        }) {
-                            HStack {
-                                ZStack {
-                                    Circle()
-                                        .fill(.white)
-                                        .frame(width: geometry.size.width * 0.064, height: geometry.size.width * 0.064)
-                                    Text("G")
-                                        .font(.system(size: geometry.size.width * 0.032, weight: .bold))
-                                        .foregroundColor(.blue)
-                                }
-                                
-                                Text("Sign-in with Google")
-                                    .font(Font.custom("Sk-Modernist", size: geometry.size.width * 0.037))
-                                    .foregroundColor(.black)
+                }
+            }
+        }
+        .onChange(of: authService.isAuthenticated) { oldValue, newValue in
+            if newValue {
+                navigateToMainView = true
+            }
+        }
+        .alert("알림", isPresented: $showAlert) {
+            Button("확인") { }
+        } message: {
+            Text(alertMessage)
+        }
+        .navigationDestination(isPresented: $navigateToMainView) {
+            MainView()
+        }
+    }
+    
+    // MARK: - Google Sign-In
+    
+    private func handleGoogleSignIn() {
+        isLoading = true
+        
+        Task {
+            let success = await googleSignInService.signInWithGoogle()
+            
+            await MainActor.run {
+                isLoading = false
+                
+                if success {
+                    // FirebaseAuthService의 isAuthenticated가 변경되면 자동으로 navigateToMainView가 true가 됨
+                    // 하지만 GoogleSignInService를 사용하는 경우를 위해 명시적으로 설정
+                    if authService.isAuthenticated {
+                        navigateToMainView = true
+                    } else {
+                        // Google Sign-In이 성공했지만 FirebaseAuthService가 아직 업데이트되지 않은 경우
+                        // 약간의 지연 후 다시 확인
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+                            if authService.isAuthenticated {
+                                self.navigateToMainView = true
                             }
-                            .frame(width: geometry.size.width * 0.544, height: geometry.size.height * 0.062)
-                            .background(.white)
-                            .cornerRadius(geometry.size.width * 0.053)
-                            .shadow(
-                                color: Color(red: 0.01, green: 0.12, blue: 0.17, opacity: 0.05),
-                                radius: geometry.size.width * 0.107, y: geometry.size.height * 0.025
-                            )
-                        }
+                        })
                     }
-                    
-                    Spacer()
+                } else {
+                    alertMessage = googleSignInService.errorMessage ?? "Google 로그인에 실패했습니다."
+                    showAlert = true
                 }
             }
         }
@@ -194,5 +140,7 @@ struct LoginView: View {
 }
 
 #Preview {
-    LoginView()
+    NavigationStack {
+        LoginView()
+    }
 }

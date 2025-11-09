@@ -13,6 +13,7 @@ class FirebaseAuthService: ObservableObject {
     @Published var isAuthenticated = false
     @Published var currentUser: FirebaseAuth.User?
     @Published var errorMessage: String?
+    @Published var isInitialized = false
     
     private var authStateListener: AuthStateDidChangeListenerHandle?
     
@@ -27,10 +28,23 @@ class FirebaseAuthService: ObservableObject {
     }
     
     private func setupAuthStateListener() {
+        // 즉시 현재 사용자 상태 확인 (자동 로그인을 위해)
+        let currentUser = Auth.auth().currentUser
+        DispatchQueue.main.async {
+            self.currentUser = currentUser
+            self.isAuthenticated = currentUser != nil
+            self.isInitialized = true
+        }
+        
+        // 인증 상태 변경 리스너 설정
         authStateListener = Auth.auth().addStateDidChangeListener { [weak self] _, thisUser in
             DispatchQueue.main.async {
-                self?.currentUser = thisUser
-                self?.isAuthenticated = thisUser != nil
+                guard let self = self else { return }
+                self.currentUser = thisUser
+                self.isAuthenticated = thisUser != nil
+                if !self.isInitialized {
+                    self.isInitialized = true
+                }
             }
         }
     }
@@ -132,3 +146,4 @@ class FirebaseAuthService: ObservableObject {
         }
     }
 }
+

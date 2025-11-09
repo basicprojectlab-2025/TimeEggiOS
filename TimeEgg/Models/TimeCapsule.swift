@@ -6,59 +6,88 @@
 //
 
 import Foundation
-import SwiftData
 import CoreLocation
 import UIKit
 
-@Model
+// MARK: - RealtimeDatabaseService 구조에 맞춘 TimeCapsule 모델 (내장 DB 사용 안 함)
+
+// MARK: - 메인 인스턴스 (제목, 메모, 공개범위)
 final class TimeCapsule {
-    var id: UUID
+    var id: String
     var title: String
-    var content: String
-    var photos: [Data] // 사진 데이터 배열
-    var arPhotos: [Data]? // AR 사진 데이터 (선택사항)
-    var stickers: [StickerData]? // 스티커 정보
-    var location: LocationData
+    var memo: String
+    var privacy: String // "전체공개", "친구공개", "비공개"
+    var photoUrls: [String]? // 사진 URL 배열
+    var creatorId: String
+    var sharedUserIds: [String]? // 공유할 사용자 ID 목록 (nil이면 비공개, 빈 배열이면 생성자만)
     var createdAt: Date
-    var isPublic: Bool // 공개/비공개 설정
-    var taggedUsers: [String] // 태그된 사용자 ID 배열
-    var creatorId: String // 생성자 ID
-    var isUnlocked: Bool // 방문하여 잠금 해제되었는지 여부
+    var updatedAt: Date
+    
+    // 추가 조건 참조 (옵셔널)
+    var additionalData: TimeCapsuleAdditionalData?
     
     init(
+        id: String,
         title: String,
-        content: String,
-        photos: [Data] = [],
-        arPhotos: [Data]? = nil,
-        stickers: [StickerData]? = nil,
-        location: LocationData,
-        isPublic: Bool = false,
-        taggedUsers: [String] = [],
-        creatorId: String
+        memo: String,
+        privacy: String,
+        photoUrls: [String]? = nil,
+        creatorId: String,
+        sharedUserIds: [String]? = nil,
+        createdAt: Date = Date(),
+        updatedAt: Date = Date()
     ) {
-        self.id = UUID()
+        self.id = id
         self.title = title
-        self.content = content
-        self.photos = photos
-        self.arPhotos = arPhotos
-        self.stickers = stickers
-        self.location = location
-        self.createdAt = Date()
-        self.isPublic = isPublic
-        self.taggedUsers = taggedUsers
+        self.memo = memo
+        self.privacy = privacy
+        self.photoUrls = photoUrls
         self.creatorId = creatorId
-        self.isUnlocked = false
+        self.sharedUserIds = sharedUserIds
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
     }
 }
 
-@Model
-final class LocationData {
+// MARK: - 추가 조건 인스턴스 (날씨, 위치, 시간)
+final class TimeCapsuleAdditionalData {
+    var timeCapsuleId: String
+    var weather: String? // "맑음", "눈", "비", "흐림", "번개"
+    var location: TimeCapsuleLocationData?
+    var timeCondition: TimeCapsuleTimeCondition?
+    var createdAt: Date
+    var updatedAt: Date
+    
+    init(
+        timeCapsuleId: String,
+        weather: String? = nil,
+        location: TimeCapsuleLocationData? = nil,
+        timeCondition: TimeCapsuleTimeCondition? = nil,
+        createdAt: Date = Date(),
+        updatedAt: Date = Date()
+    ) {
+        self.timeCapsuleId = timeCapsuleId
+        self.weather = weather
+        self.location = location
+        self.timeCondition = timeCondition
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+    }
+}
+
+// MARK: - 위치 조건
+final class TimeCapsuleLocationData {
     var latitude: Double
     var longitude: Double
     var address: String?
-    var radius: Double // 타임캡슐 접근 가능 반경 (미터)
+    var radius: Double // 반경 (미터)
     
-    init(latitude: Double, longitude: Double, address: String? = nil, radius: Double = 50.0) {
+    init(
+        latitude: Double,
+        longitude: Double,
+        address: String? = nil,
+        radius: Double = 50.0
+    ) {
         self.latitude = latitude
         self.longitude = longitude
         self.address = address
@@ -70,10 +99,30 @@ final class LocationData {
     }
 }
 
-struct StickerData: Codable {
-    let id: String
-    let position: CGPoint
-    let scale: CGFloat
-    let rotation: Double
-    let imageName: String
+// MARK: - 시간 조건
+final class TimeCapsuleTimeCondition {
+    var targetDate: Date?
+    var timeRange: TimeCapsuleTimeRange?
+    
+    init(
+        targetDate: Date? = nil,
+        timeRange: TimeCapsuleTimeRange? = nil
+    ) {
+        self.targetDate = targetDate
+        self.timeRange = timeRange
+    }
+}
+
+// MARK: - 시간 범위
+final class TimeCapsuleTimeRange {
+    var startTime: String // HH:mm 형식
+    var endTime: String // HH:mm 형식
+    
+    init(
+        startTime: String,
+        endTime: String
+    ) {
+        self.startTime = startTime
+        self.endTime = endTime
+    }
 }

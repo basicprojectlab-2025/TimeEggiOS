@@ -45,7 +45,7 @@ class GoogleMapsService: NSObject, ObservableObject {
     func setupMapView(frame: CGRect) -> GMSMapView {
         // Google Maps API 키 설정 (실제 사용시에는 API 키를 설정해야 함)
         // GMSServices.provideAPIKey("YOUR_API_KEY")
-        GMSServices.provideAPIKey("AIzaSyCyvhm5j2tSf_JWOMwzzZL3Jkuv9tx_GSc")
+        GMSServices.provideAPIKey("AIzaSyADHTnDs3L7M3c0t5Yv2tVOT48zaB8rGf8")
         
         let camera = GMSCameraPosition.camera(
             withLatitude: AppConstants.defaultCoordinate.latitude,
@@ -78,35 +78,38 @@ class GoogleMapsService: NSObject, ObservableObject {
         clearTimeCapsuleMarkers()
         
         for timeCapsule in timeCapsules {
+            // 위치 정보는 additionalData에서 가져옴
+            guard let location = timeCapsule.additionalData?.location else { continue }
+            
             let marker = GMSMarker()
             marker.position = CLLocationCoordinate2D(
-                latitude: timeCapsule.location.latitude,
-                longitude: timeCapsule.location.longitude
+                latitude: location.latitude,
+                longitude: location.longitude
             )
             marker.title = timeCapsule.title
-            marker.snippet = timeCapsule.isUnlocked ? "잠금 해제됨" : "잠금됨"
+            marker.snippet = timeCapsule.memo
             marker.userData = timeCapsule
             
-            // 마커 아이콘 설정
-            marker.icon = createTimeCapsuleIcon(isUnlocked: timeCapsule.isUnlocked)
+            // 마커 아이콘 설정 (기본 아이콘 사용)
+            marker.icon = createTimeCapsuleIcon(isUnlocked: false)
             
             marker.map = mapView
-            markers[timeCapsule.id.uuidString] = marker
+            markers[timeCapsule.id] = marker
         }
     }
     
     func updateTimeCapsuleMarker(_ timeCapsule: TimeCapsule) {
-        guard let marker = markers[timeCapsule.id.uuidString] else { return }
+        guard let marker = markers[timeCapsule.id] else { return }
         
         marker.title = timeCapsule.title
-        marker.snippet = timeCapsule.isUnlocked ? "잠금 해제됨" : "잠금됨"
-        marker.icon = createTimeCapsuleIcon(isUnlocked: timeCapsule.isUnlocked)
+        marker.snippet = timeCapsule.memo
+        marker.icon = createTimeCapsuleIcon(isUnlocked: false)
     }
     
     func removeTimeCapsuleMarker(_ timeCapsule: TimeCapsule) {
-        guard let marker = markers[timeCapsule.id.uuidString] else { return }
+        guard let marker = markers[timeCapsule.id] else { return }
         marker.map = nil
-        markers.removeValue(forKey: timeCapsule.id.uuidString)
+        markers.removeValue(forKey: timeCapsule.id)
     }
     
     func clearTimeCapsuleMarkers() {
@@ -131,14 +134,16 @@ class GoogleMapsService: NSObject, ObservableObject {
     }
     
     func moveToTimeCapsule(_ timeCapsule: TimeCapsule) {
+        guard let locationData = timeCapsule.additionalData?.location else { return }
+        
         let location = CLLocation(
-            latitude: timeCapsule.location.latitude,
-            longitude: timeCapsule.location.longitude
+            latitude: locationData.latitude,
+            longitude: locationData.longitude
         )
         moveToLocation(location, zoom: 18.0)
         
         // 마커 선택
-        if let marker = markers[timeCapsule.id.uuidString] {
+        if let marker = markers[timeCapsule.id] {
             mapView?.selectedMarker = marker
         }
     }
